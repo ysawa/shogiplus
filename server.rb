@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 require 'sinatra'
 require 'mongoid'
 require 'sinatra/reloader' if development?
@@ -20,7 +22,7 @@ use Rack::Session::Cookie, :key => 'rack.session',
                            :expire_after => 2592000,
                            :secret => 'd4963334c2748abf3ac9ebefbc31928c'
 
-set :haml, { ugly: true }
+set :haml, { ugly: true, format: :html5 }
 set :public, File.dirname(__FILE__) + '/public'
 
 configure do
@@ -40,12 +42,16 @@ end
 
 get '/' do
   if session[:access_token]
-    client = Facebook::Client.new app_id: settings.app_id, app_secret: settings.app_secret, redirect_uri: settings.redirect_uri, access_token: session[:access_token]
-    result = client.get_graph 'me'
-    result.to_s
-    # haml :index
+    @fb_client = Facebook::Client.new app_id: settings.app_id, app_secret: settings.app_secret, redirect_uri: settings.redirect_uri, access_token: session[:access_token]
+    @me = @fb_client.get_graph 'me'
+    if @me
+      haml :index
+    else
+      session[:access_token] = nil
+      redirect @fb_client.authorize_url
+    end
   else
-    client = Facebook::Client.new app_id: settings.app_id, app_secret: settings.app_secret, redirect_uri: settings.redirect_uri
+    @fb_client = Facebook::Client.new app_id: settings.app_id, app_secret: settings.app_secret, redirect_uri: settings.redirect_uri
     redirect client.authorize_url
   end
 end
@@ -57,8 +63,8 @@ end
 get '/session/new' do
   session[:access_token] = nil
   if params[:code]
-    client = Facebook::Client.new app_id: settings.app_id, app_secret: settings.app_secret, redirect_uri: settings.redirect_uri
-    session[:access_token] = client.get_access_token_from_code params[:code]
+    @fb_client = Facebook::Client.new app_id: settings.app_id, app_secret: settings.app_secret, redirect_uri: settings.redirect_uri
+    session[:access_token] = @fb_client.get_access_token_from_code params[:code]
     redirect '/'
   else
     redirect '/'
