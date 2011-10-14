@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 require 'active_support/all'
-require 'json/pure'
 require 'httpclient'
 require 'uri'
 
@@ -41,7 +40,7 @@ class Facebook::Client
     begin
       url = "https://graph.facebook.com#{path.sub(/^(\/|)/, '/')}"
       result = client.get_content url, params.merge({ access_token: @access_token })
-      return JSON.parse result
+      return Facebook::Graph.parse result
     rescue
     end
   end
