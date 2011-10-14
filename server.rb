@@ -52,7 +52,7 @@ get '/' do
     end
   else
     @fb_client = Facebook::Client.new app_id: settings.app_id, app_secret: settings.app_secret, redirect_uri: settings.redirect_uri
-    redirect client.authorize_url
+    redirect @fb_client.authorize_url
   end
 end
 
