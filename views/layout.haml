@@ -1,0 +1,15 @@
+%html{html_attrs('en'), "xmlns:fb" => "http://www.facebook.com/2008/fbml"}
+  %head
+    %title Shogi PLUS
+    %script{ type: "text/javascript", src: "http://static.ak.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php" }
+    %link{ rel: "stylesheet", href: "/main.css", type: "text/css" }
+  %body
+    #header
+      %h1
+        %a{ href: '/' }
+          Shogi PLUS
+    #content
+      = yield
+    #footer
+      %p
+        created by Team Shogi PLUS
