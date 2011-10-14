@@ -1,5 +1,5 @@
 require 'sinatra'
-# require 'mongoid'
+require 'mongoid'
 require 'sinatra/reloader' if development?
 require 'open-uri'
 require 'haml'
@@ -8,6 +8,8 @@ require 'yaml'
 require 'httpclient'
 require 'json/pure'
 require 'uri'
+require 'active_support/all'
+require './lib/facebook'
 
 # require './config/mongoid'
 # Dir["./models/*.rb"].each {|file| require file }
@@ -21,6 +23,13 @@ use Rack::Session::Cookie, :key => 'rack.session',
 set :haml, { ugly: true }
 set :public, File.dirname(__FILE__) + '/public'
 
+configure do
+  fb_config = YAML.load_file('./config/facebook.yml').stringify_keys
+  set :app_id, fb_config['app_id']
+  set :app_secret, fb_config['app_secret']
+  set :redirect_uri, "https://shogiplus.cloudfoundry.com/session/new"
+end
+
 helpers do
   def number_with_delimiter(number)
     parts = number.to_s.to_str.split('.')
@@ -31,10 +40,13 @@ end
 
 get '/' do
   if session[:access_token]
-    haml :index
+    client = Facebook::Client.new app_id: settings.app_id, app_secret: settings.app_secret, redirect_uri: settings.redirect_uri, access_token: session[:access_token]
+    result = client.get_graph 'me'
+    result.to_s
+    # haml :index
   else
-    fb = YAML.load_file('./config/facebook.yml')
-    redirect "https://graph.facebook.com/oauth/authorize?client_id=#{fb['app_id']}&redirect_uri=#{URI.encode "https://shogiplus.cloudfoundry.com/session/new"}"
+    client = Facebook::Client.new app_id: settings.app_id, app_secret: settings.app_secret, redirect_uri: settings.redirect_uri
+    redirect client.authorize_url
   end
 end
 
@@ -45,23 +57,9 @@ end
 get '/session/new' do
   session[:access_token] = nil
   if params[:code]
-    fb = YAML.load_file('./config/facebook.yml')
-    client = HTTPClient.new
-    begin
-      url = "https://graph.facebook.com/oauth/access_token?client_id=#{fb['app_id']}&redirect_uri=#{URI.encode "https://shogiplus.cloudfoundry.com/session/new"}&client_secret=#{fb['app_secret']}&code=#{params[:code]}"
-      result = client.get_content url
-      pairs = result.split '&'
-      pairs.each do |pair|
-        key, value = pair.split '='
-        if key == 'access_token'
-          session[:access_token] = value
-          break
-        end
-      end
-      redirect '/'
-    rescue
-      'failure'
-    end
+    client = Facebook::Client.new app_id: settings.app_id, app_secret: settings.app_secret, redirect_uri: settings.redirect_uri
+    session[:access_token] = client.get_access_token_from_code params[:code]
+    redirect '/'
   else
     redirect '/'
   end
