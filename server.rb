@@ -29,10 +29,12 @@ configure do
   fb_config = YAML.load_file('./config/facebook.yml').stringify_keys
   set :app_id, fb_config['app_id']
   set :app_secret, fb_config['app_secret']
-  set :redirect_uri, "https://shogiplus.cloudfoundry.com/session/new"
+  set :redirect_uri, fb_config['login_uri']
 end
 
 helpers do
+  include Facebook::Helper
+
   def number_with_delimiter(number)
     parts = number.to_s.to_str.split('.')
     parts[0].gsub!(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
