@@ -2,3 +2,9 @@
   こんにちは
   = @me.name
   \!
+  %img{ src: @fb_client.get_picture_url_from_user(@me) }
+- @fb_client.get_graph("me/friends")[:data].each do |friend|
+  %p
+    = friend.name
+    = friend.id
+    %img{ src: @fb_client.get_picture_url_from_user(friend) }
