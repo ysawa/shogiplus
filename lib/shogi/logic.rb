@@ -14,21 +14,23 @@
 module Shogi::Logic
   ROLES = %w(fu ou kin gin keima kyosha kaku hisha tokin narigin narikei narikyo ryuou ryuma)
 
-  def can_move?(role, move_x, move_y, first)
+  def can_move?(role, move_x, move_y, black)
     unless role? role
       raise ::Shogi::UnknownRole
     end
-    send "#{role.to_s}_can_move?", move_x, move_y, first
+    send "#{role.to_s}_can_move?", move_x, move_y, black
   end
 
   def role?(role)
     ROLES.include? role.to_s
   end
 
+  module_function :can_move?, :role?
+
 private
-  def fu_can_move?(move_x, move_y, first)
+  def fu_can_move?(move_x, move_y, black)
     return false if move_x == 0 and move_y == 0
-    if first
+    if black
       move_y *= -1
     end
     if move_x == 0 and move_y == 1
@@ -38,9 +40,9 @@ private
     end
   end
 
-  def gin_can_move?(move_x, move_y, first)
+  def gin_can_move?(move_x, move_y, black)
     return false if move_x == 0 and move_y == 0
-    if first
+    if black
       move_y *= -1
     end
     if move_x.abs <= 1 and move_y.abs <= 1 and
@@ -52,7 +54,7 @@ private
     end
   end
 
-  def hisha_can_move?(move_x, move_y, first)
+  def hisha_can_move?(move_x, move_y, black)
     return false if move_x == 0 and move_y == 0
     if move_x == 0 or move_y == 0
       true
@@ -61,7 +63,7 @@ private
     end
   end
 
-  def kaku_can_move?(move_x, move_y, first)
+  def kaku_can_move?(move_x, move_y, black)
     return false if move_x == 0 and move_y == 0
     if move_x.abs == move_y.abs
       true
@@ -70,8 +72,8 @@ private
     end
   end
 
-  def keima_can_move?(move_x, move_y, first)
-    if first
+  def keima_can_move?(move_x, move_y, black)
+    if black
       move_y *= -1
     end
     if move_x.abs == 1 and move_y == 2
@@ -81,9 +83,9 @@ private
     end
   end
 
-  def kin_can_move?(move_x, move_y, first)
+  def kin_can_move?(move_x, move_y, black)
     return false if move_x == 0 and move_y == 0
-    if first
+    if black
       move_y *= -1
     end
     if move_x.abs <= 1 and move_y.abs <= 1 and
@@ -94,8 +96,8 @@ private
     end
   end
 
-  def kyosha_can_move?(move_x, move_y, first)
-    if first
+  def kyosha_can_move?(move_x, move_y, black)
+    if black
       move_y *= -1
     end
     if move_x == 0 and move_y > 0
@@ -105,19 +107,19 @@ private
     end
   end
 
-  def narigin_can_move?(move_x, move_y, first)
-    kin_can_move?(move_x, move_y, first)
+  def narigin_can_move?(move_x, move_y, black)
+    kin_can_move?(move_x, move_y, black)
   end
 
-  def narikei_can_move?(move_x, move_y, first)
-    kin_can_move?(move_x, move_y, first)
+  def narikei_can_move?(move_x, move_y, black)
+    kin_can_move?(move_x, move_y, black)
   end
 
-  def narikyo_can_move?(move_x, move_y, first)
-    kin_can_move?(move_x, move_y, first)
+  def narikyo_can_move?(move_x, move_y, black)
+    kin_can_move?(move_x, move_y, black)
   end
 
-  def ou_can_move?(move_x, move_y, first)
+  def ou_can_move?(move_x, move_y, black)
     return false if move_x == 0 and move_y == 0
     if move_x.abs <= 1 and move_y.abs <= 1
       true
@@ -126,7 +128,7 @@ private
     end
   end
 
-  def ryuma_can_move?(move_x, move_y, first)
+  def ryuma_can_move?(move_x, move_y, black)
     return false if move_x == 0 and move_y == 0
     if move_x.abs == move_y.abs or (move_x.abs <= 1 and move_y.abs <= 1)
       true
@@ -135,7 +137,7 @@ private
     end
   end
 
-  def ryuou_can_move?(move_x, move_y, first)
+  def ryuou_can_move?(move_x, move_y, black)
     return false if move_x == 0 and move_y == 0
     if (move_x == 0 or move_y == 0) or (move_x.abs <= 1 and move_y.abs <= 1)
       true
@@ -144,7 +146,7 @@ private
     end
   end
 
-  def tokin_can_move?(move_x, move_y, first)
-    kin_can_move?(move_x, move_y, first)
+  def tokin_can_move?(move_x, move_y, black)
+    kin_can_move?(move_x, move_y, black)
   end
 end

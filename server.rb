@@ -34,6 +34,7 @@ end
 
 helpers do
   include Facebook::Helper
+  include Shogi::Helper
 
   def number_with_delimiter(number)
     parts = number.to_s.to_str.split('.')
