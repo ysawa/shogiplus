@@ -18,7 +18,7 @@ class Shogi::Board
   def can_move?(piece, position)
     position = Shogi::Position.new position
     return false unless have_piece? piece
-    unless piece.black? ^ move_black? # see if it's proponent turn
+    if piece.black? ^ move_black? # see if it's proponent turn
       return false
     end
     return false if position.out_of_board?
@@ -98,12 +98,20 @@ class Shogi::Board
     !move_black?
   end
 
+  def opponent
+    if move_black?
+      'white'
+    else
+      'black'
+    end
+  end
+
   def pieces_black_in_hand
-    pieces.select { |piece| piece.blank? and piece.in_hand? }
+    pieces.select { |piece| piece.black? and piece.in_hand? }
   end
 
   def pieces_black_on_board
-    pieces.select { |piece| piece.blank? and piece.on_board? }
+    pieces.select { |piece| piece.black? and piece.on_board? }
   end
 
   def pieces_in_hand
