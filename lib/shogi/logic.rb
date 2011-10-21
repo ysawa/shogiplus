@@ -148,7 +148,8 @@ module Shogi::Logic
   end
 
   module_function :can_move?, :role?
-  module_function :fu_can_move?, :gin_can_move?, :hisha_can_move?, :kaku_can_move?, :keima_can_move?, :kin_can_move?, :kyosha_can_move?
+  module_function :fu_can_move?, :gin_can_move?, :hisha_can_move?, :kaku_can_move?
+  module_function :keima_can_move?, :kin_can_move?, :kyosha_can_move?
   module_function :narigin_can_move?, :narikei_can_move?, :narikyo_can_move?, :ou_can_move?
   module_function :ryuma_can_move?, :ryuou_can_move?, :tokin_can_move?
 end
