@@ -8,7 +8,7 @@ class Shogi::Game
   belongs_to :black, class_name: 'Shogi::Player', inverse_of: 'boards_black'
   belongs_to :white, class_name: 'Shogi::Player', inverse_of: 'boards_white'
 
-  after_initialize :arrange_board
+  after_initialize :make_board
 
   def finished?
     !!self.win
@@ -34,7 +34,7 @@ class Shogi::Game
   end
 
 private
-  def arrange_board
-    self.boards << Shogi::Board.arrange if self.boards.blank?
+  def make_board
+    self.boards << Shogi::Board.make if self.boards.blank?
   end
 end

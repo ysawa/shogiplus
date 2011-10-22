@@ -221,7 +221,7 @@ class Shogi::Board
 
   class << self
     # initialize board and place all pieces
-    def arrange
+    def make
       board = new
       board.number = 0
       %w(kyousha keima gin kin ou).each_with_index do |role, i|

@@ -4,7 +4,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 describe Shogi::Board do
   before :each do
-    @board = Shogi::Board.arrange
+    @board = Shogi::Board.make
   end
 
   it 'can be initialized' do
