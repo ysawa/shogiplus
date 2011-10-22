@@ -54,27 +54,34 @@ describe Shogi::Board do
     moved_piece.role.should == piece.role
     moved_piece.black.should == piece.black
     moved_piece.position.should_not == piece.position
-    puts board_one.to_s
+    # puts board_one.to_s
     piece = board_one.find_piece_by_position([3, 3])
     board_two = board_one.copy_and_move(piece, [3, 4])
     moved_piece = board_two.find_piece_by_position([3, 4])
     moved_piece.role.should == piece.role
     moved_piece.black.should == piece.black
     moved_piece.position.should_not == piece.position
-    puts board_two.to_s
+    # puts board_two.to_s
     piece = board_two.find_piece_by_position([8, 8])
     board_three = board_two.copy_and_move(piece, [2, 2])
     moved_piece = board_three.find_piece_by_position([2, 2])
     moved_piece.role.should == piece.role
     moved_piece.black.should == piece.black
     moved_piece.position.should_not == piece.position
-    puts board_three.to_s
+    # puts board_three.to_s
     piece = board_three.find_piece_by_position([3, 1])
     board_four = board_three.copy_and_move(piece, [2, 2])
     moved_piece = board_four.find_piece_by_position([2, 2])
     moved_piece.role.should == piece.role
     moved_piece.black.should == piece.black
     moved_piece.position.should_not == piece.position
-    puts board_four.to_s
+    # puts board_four.to_s
+    piece = board_four.find_piece_in_hand_by_role('kaku')
+    board_five = board_four.copy_and_move(piece, [1, 5])
+    moved_piece = board_five.find_piece_by_position([1, 5])
+    moved_piece.role.should == piece.role
+    moved_piece.black.should == piece.black
+    moved_piece.position.should == Shogi::Position.new([1, 5])
+    # puts board_five.to_s
   end
 end

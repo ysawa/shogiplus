@@ -22,15 +22,7 @@ class Shogi::Board
       return false
     end
     return false if position.out_of_board?
-    if piece.in_hand?
-      if position_have_proponent_piece?(position) or
-          position_have_opponent_piece?(position) or
-          checkmate?
-        return false
-      else
-        return true
-      end
-    end
+    return can_put?(piece, position) if piece.in_hand?
     return false if position_have_proponent_piece? position
     return false unless piece.can_move? position
     heap = piece.attributes.dup
@@ -42,6 +34,27 @@ class Shogi::Board
     end
     piece.attributes = heap
     true
+  end
+
+  def can_put?(piece, position)
+    if piece.in_hand?
+      if position_have_proponent_piece?(position) or
+          position_have_opponent_piece?(position)
+        return false
+      else
+        heap = piece.attributes.dup
+        piece.position = position
+        piece.in_hand = false
+        if checkmate?
+          piece.attributes = heap
+          return false
+        end
+        piece.attributes = heap
+        true
+      end
+    else
+      false
+    end
   end
 
   def checkmate?
@@ -61,7 +74,11 @@ class Shogi::Board
 
   def copy_and_move(piece, position)
     board = self.copy
-    target = board.find_piece_by_position(piece.position)
+    if piece.in_hand
+      target = board.find_piece_in_hand_by_role(piece.role)
+    else
+      target = board.find_piece_by_position(piece.position)
+    end
     board.move(target, position)
     board
   end
@@ -69,6 +86,13 @@ class Shogi::Board
   def find_piece_by_position(position)
     self.pieces.each do |piece|
       return piece if piece.x == position[0] and piece.y == position[1]
+    end
+    nil
+  end
+
+  def find_piece_in_hand_by_role(role)
+    self.pieces.each do |piece|
+      return piece if piece.role == role and piece.in_hand
     end
     nil
   end
@@ -200,24 +224,16 @@ class Shogi::Board
     def arrange
       board = new
       board.number = 0
-      board.pieces << Shogi::Piece.piece('ou', [5, 1], false)
-      board.pieces << Shogi::Piece.piece('ou', [5, 9], true)
-      board.pieces << Shogi::Piece.piece('kin', [4, 1], false)
-      board.pieces << Shogi::Piece.piece('kin', [6, 1], false)
-      board.pieces << Shogi::Piece.piece('kin', [4, 9], true)
-      board.pieces << Shogi::Piece.piece('kin', [6, 9], true)
-      board.pieces << Shogi::Piece.piece('gin', [3, 1], false)
-      board.pieces << Shogi::Piece.piece('gin', [7, 1], false)
-      board.pieces << Shogi::Piece.piece('gin', [3, 9], true)
-      board.pieces << Shogi::Piece.piece('gin', [7, 9], true)
-      board.pieces << Shogi::Piece.piece('keima', [2, 1], false)
-      board.pieces << Shogi::Piece.piece('keima', [8, 1], false)
-      board.pieces << Shogi::Piece.piece('keima', [2, 9], true)
-      board.pieces << Shogi::Piece.piece('keima', [8, 9], true)
-      board.pieces << Shogi::Piece.piece('kyosha', [1, 1], false)
-      board.pieces << Shogi::Piece.piece('kyosha', [9, 1], false)
-      board.pieces << Shogi::Piece.piece('kyosha', [1, 9], true)
-      board.pieces << Shogi::Piece.piece('kyosha', [9, 9], true)
+      %w(kyousha keima gin kin ou).each_with_index do |role, i|
+        x = i + 1
+        opposite_x = 10 - x
+        board.pieces << Shogi::Piece.piece(role, [x, 1], false)
+        board.pieces << Shogi::Piece.piece(role, [x, 9], true)
+        unless x == opposite_x
+          board.pieces << Shogi::Piece.piece(role, [opposite_x, 1], false)
+          board.pieces << Shogi::Piece.piece(role, [opposite_x, 9], true)
+        end
+      end
       board.pieces << Shogi::Piece.piece('kaku', [2, 2], false)
       board.pieces << Shogi::Piece.piece('hisha', [8, 2], false)
       board.pieces << Shogi::Piece.piece('hisha', [2, 8], true)
