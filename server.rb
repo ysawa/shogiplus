@@ -12,6 +12,7 @@ require 'json/pure'
 require 'uri'
 require 'active_support/all'
 require './lib/facebook'
+require './lib/shogi'
 
 # require './config/mongoid'
 # Dir["./models/*.rb"].each {|file| require file }
@@ -44,7 +45,7 @@ helpers do
 
   def partial(renderer, template, options = {})
     options = options.merge({layout: false})
-    template = "_#{template.to_s}".to_sym
+    template = template.to_s.sub(/(\/|^)(\w+)$/, '\1_\2').to_sym
     method(renderer).call(template, options)
   end
 
@@ -53,7 +54,7 @@ helpers do
   end
 
   def partial_haml(template, options = {})
-    partial(:haml, template, options = {})
+    partial(:haml, template, options)
   end
 end
 
@@ -62,6 +63,7 @@ get '/' do
     @fb_client = Facebook::Client.new app_id: settings.app_id, app_secret: settings.app_secret, redirect_uri: settings.redirect_uri, access_token: session[:access_token]
     @me = @fb_client.get_graph 'me'
     if @me
+      @game = Shogi::Game.new
       haml :index
     else
       session[:access_token] = nil

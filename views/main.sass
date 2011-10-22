@@ -1,3 +1,9 @@
+@mixin clearfix
+  &:after
+    content: ""
+    display: block
+    clear: both
+
 body
   margin: 0
   font-size: 90%
@@ -40,7 +46,7 @@ dl
       color: black
 
 #content
-  padding: 2.2em 4em
+  padding: 1.2em 4em
   h2
     margin: .8em 0 .5em
     font-size: 1.6em
@@ -58,6 +64,39 @@ dl
   a:hover
     color: #05A
     text-decoration: underline
+  #board
+    @include clearfix
+    background-color: #ffab00
+    margin: 0 auto
+    width: 540px
+    height: 540px
+    border: 1px solid #b37700
+    .cell
+      float: left
+      height: 50px
+      width: 50px
+      border: 1px solid #b37700
+      padding: 4px
+      .piece
+        cursor: pointer
+        border: 1px solid #b37700
+        background-color: #ffab00
+        height: 48px
+        width: 48px
+        text-align: center
+        vertical-align: middle
+        overflow: hidden
+        text-overflow: ellipsis
+        &.black
+          color: #000
+        &.white
+          color: #fff
+      .ui-sortable-placeholder
+        border: 1px dotted black
+        visibility: visible !important
+        height: 50px !important
+        *
+          visibility: hidden
 
 #footer
   margin: 10px

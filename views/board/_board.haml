@@ -1,0 +1,15 @@
+#board
+  - 1.upto(9).each do |y|
+    - 9.downto(1).each do |x|
+      .cell
+        - piece = board.find_piece_by_position([x, y])
+        - if piece
+          .piece{ id: "piece_#{piece.id}", class: player_side_from_piece(piece) }
+            = piece.role
+:javascript
+  $(function () {
+    $('.cell').sortable({
+      connectWith: '.cell'
+    });
+    $('.cell').disableSelection();
+  });
