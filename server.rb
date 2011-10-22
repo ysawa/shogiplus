@@ -16,11 +16,11 @@ require './lib/facebook'
 # require './config/mongoid'
 # Dir["./models/*.rb"].each {|file| require file }
 
-use Rack::Session::Cookie, :key => 'rack.session',
-                           :domain => 'shogiplus.cloudfoundry.com',
-                           :path => '/',
-                           :expire_after => 2592000,
-                           :secret => 'd4963334c2748abf3ac9ebefbc31928c'
+use Rack::Session::Cookie, key: 'rack.session',
+                           domain: 'shogiplus.cloudfoundry.com',
+                           path: '/',
+                           expire_after: 2592000,
+                           secret: 'd4963334c2748abf3ac9ebefbc31928c'
 
 set :haml, { ugly: true, format: :html5 }
 set :public, File.dirname(__FILE__) + '/public'
@@ -40,6 +40,20 @@ helpers do
     parts = number.to_s.to_str.split('.')
     parts[0].gsub!(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
     parts.join('.')
+  end
+
+  def partial(renderer, template, options = {})
+    options = options.merge({layout: false})
+    template = "_#{template.to_s}".to_sym
+    method(renderer).call(template, options)
+  end
+
+  def partial_erb(template, options)
+    partial(:erb, template, options)
+  end
+
+  def partial_haml(template, options = {})
+    partial(:haml, template, options = {})
   end
 end
 
