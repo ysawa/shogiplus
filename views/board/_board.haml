@@ -1,15 +1,12 @@
 #board
   - 1.upto(9).each do |y|
     - 9.downto(1).each do |x|
-      .cell
+      .cell{ x: x, y: y }
         - piece = board.find_piece_by_position([x, y])
         - if piece
-          .piece{ id: "piece_#{piece.id}", class: player_side_from_piece(piece) }
+          .piece{ id: piece.id, class: player_side_from_piece(piece), x: piece.x, y: piece.y }
             = piece.role
 :javascript
   $(function () {
-    $('.cell').sortable({
-      connectWith: '.cell'
-    });
-    $('.cell').disableSelection();
+    Shogi.movable();
   });
