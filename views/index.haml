@@ -1,6 +1,1 @@
 = partial_haml 'board/board', locals: { board: @game.last }
-%p
-  こんにちは
-  = @me.name
-  \!
-  %img{ src: @fb_client.get_picture_url_from_user(@me) }
