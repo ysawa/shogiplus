@@ -19,7 +19,7 @@ describe Shogi::Logic do
       Shogi::Logic.reverse_role('narikyo').should == 'kyosha'
     end
 
-    it 'cannot reverse ou or kin' do
+    it 'can reverse neither ou nor kin' do
       %w(ou kin).each do |role|
         begin
           Shogi::Logic.reverse_role(role)
