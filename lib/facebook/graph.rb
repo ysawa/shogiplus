@@ -40,7 +40,7 @@ class Facebook::Graph
       if json_string
         new(JSON.parse json_string)
       else
-        new {}
+        new({})
       end
     end
 
