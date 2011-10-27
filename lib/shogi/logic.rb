@@ -12,7 +12,13 @@
 # 香桂銀金王金銀桂香 9
 
 module Shogi::Logic
-  ROLES = %w(fu ou kin gin keima kyosha kaku hisha tokin narigin narikei narikyo ryuou ryuma)
+  ROLES = %w(fu gin keima kyosha kaku hisha tokin narigin narikei narikyo ryuma ryuou kin ou)
+  TOP_ROLES = %w(fu gin keima kyosha kaku hisha kin ou)
+  BOTTOM_ROLES = %w(tokin narigin narikei narikyo ryuma ryuou)
+
+  def bottom_role?(role)
+    BOTTOM_ROLES.include? role
+  end
 
   def can_move?(role, move_x, move_y, black)
     unless role? role
@@ -121,6 +127,18 @@ module Shogi::Logic
     end
   end
 
+  def reverse_role(role)
+    if top_role? role and !(role == 'ou' or role == 'kin')
+      key = TOP_ROLES.index role
+      BOTTOM_ROLES[key]
+    elsif bottom_role? role
+      key = BOTTOM_ROLES.index role
+      TOP_ROLES[key]
+    else
+      raise Shogi::UnexpectedReverse
+    end
+  end
+
   def role?(role)
     ROLES.include? role.to_s
   end
@@ -147,9 +165,14 @@ module Shogi::Logic
     kin_can_move?(move_x, move_y, black)
   end
 
+  def top_role?(role)
+    TOP_ROLES.include? role
+  end
+
   module_function :can_move?, :role?
   module_function :fu_can_move?, :gin_can_move?, :hisha_can_move?, :kaku_can_move?
   module_function :keima_can_move?, :kin_can_move?, :kyosha_can_move?
   module_function :narigin_can_move?, :narikei_can_move?, :narikyo_can_move?, :ou_can_move?
   module_function :ryuma_can_move?, :ryuou_can_move?, :tokin_can_move?
+  module_function :reverse_role, :bottom_role?, :top_role?
 end

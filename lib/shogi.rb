@@ -10,6 +10,8 @@ module Shogi
 
   class UnknownRole < StandardError; end
   class UnexpectedMovement < StandardError; end
+  class UnexpectedReverse < StandardError; end
+
   autoload :Board, File.join(root, '/shogi/board.rb')
   autoload :Helper, File.join(root, '/shogi/helper.rb')
   autoload :Game, File.join(root, '/shogi/game.rb')
