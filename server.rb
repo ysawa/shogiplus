@@ -61,7 +61,7 @@ end
 get '/' do
   if session[:access_token]
     @fb_client = Facebook::Client.new app_id: settings.app_id, app_secret: settings.app_secret, redirect_uri: settings.redirect_uri, access_token: session[:access_token]
-    @me = @fb_client.get_graph 'me'
+    @me = @fb_client.me
     if @me
       @game = Shogi::Game.new
       haml :index

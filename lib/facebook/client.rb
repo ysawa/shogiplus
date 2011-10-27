@@ -58,6 +58,10 @@ class Facebook::Client
     @redirect_uri = params['redirect_uri']
   end
 
+  def me
+    @me ||= get_graph 'me'
+  end
+
 protected
   def build_url(url, params = {})
     if params.blank?
