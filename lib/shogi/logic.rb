@@ -21,10 +21,6 @@ module Shogi::Logic
     send "#{role.to_s}_can_move?", move_x, move_y, black
   end
 
-  def role?(role)
-    ROLES.include? role.to_s
-  end
-
   def fu_can_move?(move_x, move_y, black)
     return false if move_x == 0 and move_y == 0
     if black
@@ -123,6 +119,10 @@ module Shogi::Logic
     else
       false
     end
+  end
+
+  def role?(role)
+    ROLES.include? role.to_s
   end
 
   def ryuma_can_move?(move_x, move_y, black)
