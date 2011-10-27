@@ -19,11 +19,13 @@ Shogi.escape = function (piece) {
 Shogi.movable = function () {
   $('.cell').sortable({
     connectWith: '.cell',
-    update: function (event, ui) {
+    stop: function (event, ui) {
       var piece = ui.item;
       if (Shogi.cell_have_same_side_of_piece(piece)) {
         alert('その動きはできません');
         Shogi.escape(piece);
+      } else {
+        $.sound.play('/img/put.mp3', { timeout: 5000 });
       }
     }
   });
