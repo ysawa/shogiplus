@@ -1,0 +1,3 @@
+app_id: 1
+app_secret: ""
+login_uri: "https://shogiplus.cloudfoundry.com/session/new"
