@@ -28,7 +28,7 @@ class Facebook::Graph
   end
 
   def key?(key)
-    @graph.keys.key? key
+    keys.key? key
   end
 
   def to_s
