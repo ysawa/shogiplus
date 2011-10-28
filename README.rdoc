@@ -1,0 +1,3 @@
+= Shogi PLUS
+
+Shogi PLUS is a Facebook application to play shogi with friends.
