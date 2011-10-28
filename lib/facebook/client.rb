@@ -31,7 +31,9 @@ class Facebook::Client
           return @access_token = value
         end
       end
-    rescue
+    rescue HTTPClient::BadResponseError => e
+      raise e
+    rescue => e
     end
   end
 
@@ -52,10 +54,14 @@ class Facebook::Client
 
   def initialize(params)
     params.stringify_keys!
-    @app_id = params['app_id']
-    @app_secret = params['app_secret']
+    %w(app_id app_secret redirect_uri).each do |attr_name|
+      if params[attr_name].present?
+        instance_variable_set "@#{attr_name}", params[attr_name]
+      else
+        raise Facebook::UnexpectedArgument.new("#{attr_name} is blank")
+      end
+    end
     @access_token = params['access_token']
-    @redirect_uri = params['redirect_uri']
   end
 
   def me
@@ -67,7 +73,7 @@ protected
     if params.blank?
       return url
     else
-      if url.include? '?' # a little stinky
+      if url.include? '?' # FIX IT: a little stinky
         url_with_params = url + '&'
       else
         url_with_params = url

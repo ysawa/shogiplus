@@ -58,19 +58,20 @@ helpers do
   end
 end
 
-get '/' do
+before do
   if session[:access_token]
     @fb_client = Facebook::Client.new app_id: settings.app_id, app_secret: settings.app_secret, redirect_uri: settings.redirect_uri, access_token: session[:access_token]
-    @me = @fb_client.me
-    if @me
-      @game = Shogi::Game.new
-      haml :index
-    else
-      session[:access_token] = nil
-      redirect @fb_client.authorize_url
-    end
   else
     @fb_client = Facebook::Client.new app_id: settings.app_id, app_secret: settings.app_secret, redirect_uri: settings.redirect_uri
+  end
+end
+
+get '/' do
+  if @me = @fb_client.me
+    @game = Shogi::Game.new
+    haml :index
+  else
+    session[:access_token] = nil
     redirect @fb_client.authorize_url
   end
 end
@@ -92,6 +93,7 @@ end
 
 delete '/session' do
   session[:access_token] = nil
+  redirect @fb_client.authorize_url
 end
 
 get '/main.css' do
