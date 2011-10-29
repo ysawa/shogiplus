@@ -3,6 +3,7 @@
     content: ""
     display: block
     clear: both
+$common_width: 760px
 
 body
   margin: 0
@@ -32,21 +33,25 @@ dl
 
 #header
   margin: 0
-  padding: .5em 4em
-  border-bottom: 1px solid silver
-  background: #EEE
+  padding: 5px 1px
+  background-color: #eee
+  border:
+    right: 1px solid #efefef
+    left: 1px solid #efefef
   h1
     margin: 0
     font-family: Georgia, serif
     font-weight: normal
-    font-size: 2.2em
-    line-height: 1.3
+    font-size: 16px
+    line-height: 20px
     a
       text-decoration: none
       color: black
 
 #content
-  padding: 1.2em 4em
+  width: $common_width
+  margin: 0 auto
+  padding: 0
   h2
     margin: .8em 0 .5em
     font-size: 1.6em
@@ -64,17 +69,23 @@ dl
   a:hover
     color: #05A
     text-decoration: underline
+
+#game
+  margin: 0 auto
+  padding: 20px 0
+  width: $common_width
+  border-bottom: 1px solid #efefef
   #board
     @include clearfix
     background-color: #ffab00
     margin: 0 auto
-    width: 540px
-    height: 540px
+    width: 504px
+    height: 504px
     border: 1px solid #b37700
     .cell
       float: left
-      height: 50px
-      width: 50px
+      height: 46px
+      width: 46px
       border: 1px solid #b37700
       padding: 4px
       overflow: hidden
@@ -82,8 +93,8 @@ dl
         cursor: pointer
         border: 1px solid #b37700
         background-color: #ffab00
-        height: 48px
-        width: 48px
+        height: 44px
+        width: 44px
         text-align: center
         vertical-align: middle
         overflow: hidden
@@ -95,8 +106,8 @@ dl
       .ui-sortable-placeholder
         border: 1px dotted black
         visibility: visible !important
-        height: 48px !important
-        width: 48px !important
+        height: 44px !important
+        width: 44px !important
         *
           visibility: hidden
 

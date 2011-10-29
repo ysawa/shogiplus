@@ -9,29 +9,6 @@ Shogi.cell = function (piece) {
   return piece.parent('.cell');
 }
 
-Shogi.escape = function (piece) {
-  var piece = $(piece);
-  var x = piece.attr('x');
-  var y = piece.attr('y');
-  $("#board .cell[x='" + x + "'][y='" + y + "']").append(piece);
-}
-
-Shogi.movable = function () {
-  $('.cell').sortable({
-    connectWith: '.cell',
-    stop: function (event, ui) {
-      var piece = ui.item;
-      if (Shogi.cell_have_same_side_of_piece(piece)) {
-        alert('その動きはできません');
-        Shogi.escape(piece);
-      } else {
-        $.sound.play('/img/put.mp3', { timeout: 5000 });
-      }
-    }
-  });
-  $('.cell').disableSelection();
-}
-
 Shogi.cell_have_same_side_of_piece = function (piece) {
   var cell = Shogi.cell(piece);
   var black = null;
@@ -55,5 +32,39 @@ Shogi.cell_have_same_side_of_piece = function (piece) {
   return result;
 }
 
+Shogi.escape = function (piece) {
+  var piece = $(piece);
+  var x = piece.attr('x');
+  var y = piece.attr('y');
+  $("#board .cell[x='" + x + "'][y='" + y + "']").append(piece);
+}
+
+Shogi.movable = function () {
+  $('.cell').sortable({
+    connectWith: '.cell',
+    stop: function (event, ui) {
+      var piece = ui.item;
+      if (Shogi.cell_have_same_side_of_piece(piece)) {
+        alert('その動きはできません');
+        Shogi.escape(piece);
+      } else {
+        $.sound.play('/img/put.mp3', { timeout: 5000 });
+      }
+    }
+  });
+  $('.cell').disableSelection();
+}
+
 Shogi.prototype = {
+}
+
+Shogi.reload = function () {
+  var game = $('div#game');
+  var game_id = game.attr('game-id');
+  $.get(
+      '/games/' + game_id + '/reload',
+      function (data) {
+        game.html(data);
+      }
+  );
 }

@@ -1,0 +1,6 @@
+%ul
+  - @games.each do |game|
+    %li
+      %a{ href: "/games/#{game.id}" }= game.created_at
+  %il
+    %a{ href: "/games/start" } 新規ゲーム

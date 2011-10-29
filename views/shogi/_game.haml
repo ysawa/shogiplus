@@ -1,0 +1,6 @@
+#game{ 'game-id' => game.id }
+  = partial_haml 'shogi/board', locals: { game: game, board: game.last }
+:javascript
+  $(function () {
+    var reload = setInterval(Shogi.reload, 5000);
+  });
