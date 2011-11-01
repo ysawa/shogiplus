@@ -25,9 +25,9 @@ class Shogi::Board
     return can_put?(piece, position) if piece.in_hand?
     return false if position_have_proponent_piece? position
     return false unless piece.can_move? position
+    return false if jump?(piece, position) and !piece.can_jump?
     heap = piece.attributes.dup
-    piece.position = position
-    piece.in_hand = false
+    piece.move position
     if checkmate?
       piece.attributes = heap
       return false
@@ -41,10 +41,11 @@ class Shogi::Board
       if position_have_proponent_piece?(position) or
           position_have_opponent_piece?(position)
         return false
+      elsif !piece.can_put?(position)
+        return false
       else
         heap = piece.attributes.dup
-        piece.position = position
-        piece.in_hand = false
+        piece.put position
         if checkmate?
           piece.attributes = heap
           return false
@@ -101,16 +102,53 @@ class Shogi::Board
     pieces.include? piece
   end
 
+  def jump?(piece, position)
+    movement = Shogi::Position.new(position) - piece.position
+    if movement.x.abs <= 1 and movement.y.abs <= 1
+      false
+    elsif movement.x == 0
+      1.upto(movement.y.abs - 1) do |move_y_abs|
+        if movement.y > 0
+          return true if position_have_piece?(piece.position + [0, move_y_abs])
+        else
+          return true if position_have_piece?(piece.position - [0, move_y_abs])
+        end
+      end
+      false
+    elsif movement.y == 0
+      1.upto(movement.x.abs - 1) do |move_x_abs|
+        if movement.x > 0
+          return true if position_have_piece?(piece.position + [move_x_abs, 0])
+        else
+          return true if position_have_piece?(piece.position - [move_x_abs, 0])
+        end
+      end
+      false
+    elsif movement.x.abs == movement.y.abs
+      1.upto(movement.x.abs - 1) do |move_abs|
+        if movement.x > 0 and movement.y > 0
+          return true if position_have_piece?(piece.position + [move_abs, move_abs])
+        elsif movement.x < 0 and movement.y > 0
+          return true if position_have_piece?(piece.position + [- move_abs, move_abs])
+        elsif movement.x > 0 and movement.y < 0
+          return true if position_have_piece?(piece.position + [move_abs, - move_abs])
+        else
+          return true if position_have_piece?(piece.position - [move_abs, move_abs])
+        end
+      end
+      false
+    else
+      true
+    end
+  end
+
   def move(piece, position)
     raise Shogi::UnexpectedMovement unless can_move?(piece, position)
     opponent = find_piece_by_position(position)
     if opponent and (move_black? ^ opponent.black?) # see if opponent is really opponent
-      opponent.in_hand = true
-      opponent.position = nil
-      opponent.black = move_black?
+      opponent.get
     end
-    piece.position = position
-    piece.in_hand = false
+    piece.move position
     nil
   end
 

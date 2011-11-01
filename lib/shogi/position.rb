@@ -2,11 +2,11 @@
 #
 class Shogi::Position < Array
   def +(position)
-    Shogi::Position.new [x + position[0], y + position[1]]
+    Shogi::Position.new([x + position[0], y + position[1]])
   end
 
   def -(position)
-    Shogi::Position.new [x - position[0], y - position[1]]
+    Shogi::Position.new([x - position[0], y - position[1]])
   end
 
   def relative_to(position)

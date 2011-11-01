@@ -47,6 +47,31 @@ describe Shogi::Board do
     copied_piece.black.should == piece.black
   end
 
+  it 'jump? return true if piece jumps' do
+    next_board = @board.copy
+    piece = next_board.find_piece_by_position([7, 7]) # fu
+    next_board.jump?(piece, [7, 6]).should be_false # move by 1
+    piece = next_board.find_piece_by_position([8, 8]) # kaku
+    next_board.jump?(piece, [2, 2]).should be_true # move by 6
+    piece = next_board.find_piece_by_position([2, 8]) # hisya
+    next_board.jump?(piece, [2, 6]).should be_true # jump fuB
+    next_board.jump?(piece, [2, 2]).should be_true # jump fuB, and fuW
+    next_board.jump?(piece, [4, 8]).should be_false # not jump
+  end
+
+  it 'only fu, kyosha, and keima cannot put in front of wall' do
+    next_board = @board.copy
+    piece = next_board.find_piece_by_position([8, 1]); piece.get # get keima
+    piece = next_board.find_piece_by_position([7, 3]); piece.get # get fu
+    piece = next_board.find_piece_by_position([9, 1]); piece.get # get kyosha
+    next_board.pieces_white_on_board.each { |piece| piece.delete unless piece.role == 'ou' }
+    next_board.pieces_black_in_hand.each do |piece|
+      error = nil
+      begin next_board.move piece, [1, 1]; rescue => error; end
+      error.should be_a Shogi::UnexpectedMovement
+    end
+  end
+
   it 'can be copied and moved' do
     piece = @board.find_piece_by_position([7, 7])
     board_one = @board.copy_and_move(piece, [7, 6])

@@ -19,10 +19,32 @@ class Shogi::Piece
     !!self.black
   end
 
+  def can_jump?
+    Shogi::Logic.can_jump?(self.role)
+  end
+
   def can_move?(target)
     return true if self.in_hand
-    move = target - self.position
+    move = Shogi::Position.new(target) - self.position
     Shogi::Logic.can_move?(self.role, move.x, move.y, self.black)
+  end
+
+  def can_put?(target)
+    target = Shogi::Position.new(target)
+    Shogi::Logic.can_put?(self.role, target.x, target.y, self.black)
+  end
+
+  def get
+    self.in_hand = true
+    self.position = nil
+    self.black ^= true
+    nil
+  end
+
+  def move(position)
+    self.position = position
+    self.in_hand = false
+    nil
   end
 
   def on_board?
@@ -70,4 +92,6 @@ class Shogi::Piece
       criteria.where(position: position).first
     end
   end
+
+  alias :put :move
 end

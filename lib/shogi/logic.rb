@@ -20,11 +20,25 @@ module Shogi::Logic
     BOTTOM_ROLES.include? role
   end
 
+  def can_jump?(role)
+    role == 'keima'
+  end
+
   def can_move?(role, move_x, move_y, black)
     unless role? role
       raise ::Shogi::UnknownRole
     end
     send "#{role.to_s}_can_move?", move_x, move_y, black
+  end
+
+  def can_put?(role, x, y, black)
+    case role
+    when 'fu', 'kyousha'
+      return false if (y == 1 and black) or (y == 9 and !black)
+    when 'keima'
+      return false if (y <= 2 and black) or (y >= 8 and !black)
+    end
+    true
   end
 
   def fu_can_move?(move_x, move_y, black)
@@ -169,7 +183,7 @@ module Shogi::Logic
     TOP_ROLES.include? role
   end
 
-  module_function :can_move?, :role?
+  module_function :can_jump?, :can_move?, :can_put?, :role?
   module_function :fu_can_move?, :gin_can_move?, :hisha_can_move?, :kaku_can_move?
   module_function :keima_can_move?, :kin_can_move?, :kyosha_can_move?
   module_function :narigin_can_move?, :narikei_can_move?, :narikyo_can_move?, :ou_can_move?
